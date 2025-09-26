@@ -1,25 +1,33 @@
-import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import MeetingRoomDetails from "@/components/MeetingRoomDetails";
+import { db } from "@/lib/firebase";
+import MeetingRoomCard, { Room } from "@/components/MeetingRoomCard";
 
 interface Props {
  params: { id: string };
 }
 
-export default async function DetailsMeetingRoomPage({ params }: Props) {
- const { id } = params;
-
- const roomRef = doc(db, "meeting-rooms", id);
+export default async function MeetingRoomDetailsPage({ params }: Props) {
+ const roomRef = doc(db, "meeting-rooms", params.id);
  const roomSnap = await getDoc(roomRef);
 
- if (!roomSnap.exists()) return <p>Room not found</p>;
+ if (!roomSnap.exists()) return <p>Кімната не знайдена</p>;
 
  const roomData = roomSnap.data();
 
- const room = {
-  ...roomData,
-  createdAt: roomData.createdAt?.toDate().toISOString(),
+ const room: Room = {
+  id: roomSnap.id,
+  name: roomData?.name || "Без назви",
+  description: roomData?.description || "",
+  capacity: roomData?.capacity || 0,
  };
 
- return <MeetingRoomDetails room={room} id={id} />;
+ return (
+   <div className="px-6 py-10 max-w-md mx-auto">
+    <MeetingRoomCard
+      room={room}
+      showBookButton={true}
+      showDetailsButton={false}
+    />
+   </div>
+ );
 }

@@ -18,7 +18,7 @@ export default function RegisterPage() {
 
       await setDoc(doc(db, "users", userCred.user.uid), {
         email,
-        role: "user", // за замовчуванням
+        role: "user",
         createdAt: serverTimestamp(),
       });
 
